@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, PresentationControls } from '@react-three/drei';
+import * as THREE from 'three';
 
 const CoffeeCup = () => {
   const cupRef = useRef<THREE.Mesh>(null);

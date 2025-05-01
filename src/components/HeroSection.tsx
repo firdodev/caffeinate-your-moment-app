@@ -1,20 +1,11 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Button } from '@/components/ui/button';
 import { Coffee, Gift, Star } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
-// Use dynamic imports for the 3D components to ensure they only load on the client
-const CoffeeScene = dynamic(() => import('@/components/3d/CoffeeScene'), {
-  ssr: false,
-  loading: () => <div className="h-[300px] md:h-[400px] lg:h-[500px] w-full flex items-center justify-center">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-coffee-dark"></div>
-  </div>
-});
-
-const FloatingBeans = dynamic(() => import('@/components/3d/FloatingBeans'), {
-  ssr: false
-});
+// Use lazy imports for the 3D components to ensure they only load on the client
+const CoffeeScene = lazy(() => import('@/components/3d/CoffeeScene'));
+const FloatingBeans = lazy(() => import('@/components/3d/FloatingBeans'));
 
 const HeroSection = () => {
   return (

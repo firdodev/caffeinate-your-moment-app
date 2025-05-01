@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
+import * as THREE from 'three';
 
 const Bean = () => {
   const beanRef = useRef<THREE.Mesh>(null);
