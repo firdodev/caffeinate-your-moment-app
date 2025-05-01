@@ -1,12 +1,26 @@
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Coffee, Gift, Star } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+// Use dynamic imports for the 3D components to ensure they only load on the client
+const CoffeeScene = dynamic(() => import('@/components/3d/CoffeeScene'), {
+  ssr: false,
+  loading: () => <div className="h-[300px] md:h-[400px] lg:h-[500px] w-full flex items-center justify-center">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-coffee-dark"></div>
+  </div>
+});
+
+const FloatingBeans = dynamic(() => import('@/components/3d/FloatingBeans'), {
+  ssr: false
+});
 
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-coffee-cream to-white py-16 lg:py-24">
       <div className="absolute inset-0 bg-[radial-gradient(#D4A76A_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
+      <FloatingBeans />
       <div className="container relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col space-y-6 animate-fade-in">
@@ -47,16 +61,24 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
+          
           <div className="relative lg:h-[600px] animate-slide-up">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[560px] bg-coffee-dark rounded-[40px] p-3">
-              <div className="w-full h-full bg-white rounded-[32px] overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1200&q=80" 
-                  alt="Coffee app interface" 
-                  className="w-full h-full object-cover"
-                />
+            <Suspense fallback={<div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-coffee-dark"></div>
+            </div>}>
+              <div className="relative">
+                <CoffeeScene />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[560px] bg-coffee-dark rounded-[40px] p-3 z-10">
+                  <div className="w-full h-full bg-white rounded-[32px] overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1200&q=80" 
+                      alt="Coffee app interface" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            </Suspense>
             <div className="absolute top-10 right-2 lg:-right-16 w-32 h-32 bg-coffee-light/20 rounded-full blur-2xl"></div>
             <div className="absolute bottom-10 left-2 lg:-left-16 w-40 h-40 bg-coffee-cream rounded-full blur-3xl"></div>
           </div>
