@@ -1,73 +1,50 @@
-# Welcome to your Lovable project
+# Welcome to your Expo app 👋
 
-## Project info
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-**URL**: https://lovable.dev/projects/a5579943-1585-419e-bd0b-bcb09c246ef0
+## Get started
 
-## How can I edit this code?
+1. Install dependencies
 
-There are several ways of editing your application.
+   ```bash
+   npm install
+   ```
 
-**Use Lovable**
+2. Start the app
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a5579943-1585-419e-bd0b-bcb09c246ef0) and start prompting.
+   ```bash
+    npx expo start
+   ```
 
-Changes made via Lovable will be committed automatically to this repo.
+In the output, you'll find options to open the app in a
 
-**Use your preferred IDE**
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Get a fresh project
 
-Follow these steps:
+When you're ready, run:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm run reset-project
 ```
 
-**Edit a file directly in GitHub**
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Learn more
 
-**Use GitHub Codespaces**
+To learn more about developing your project with Expo, look at the following resources:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## What technologies are used for this project?
+## Join the community
 
-This project is built with:
+Join our community of developers creating universal apps.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a5579943-1585-419e-bd0b-bcb09c246ef0) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
