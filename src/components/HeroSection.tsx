@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Coffee, Star } from 'lucide-react';
 
 // Use lazy imports for the 3D components to ensure they only load on the client
-const CoffeeCatchGame = lazy(() => import('@/components/3d/CoffeeCatchGame'));
+const CoffeeScene = lazy(() => import('@/components/3d/CoffeeScene'));
 const Phone3D = lazy(() => import('@/components/3d/Phone3D'));
 
 const HeroSection = () => {
@@ -20,24 +20,24 @@ const HeroSection = () => {
             </div>
             <h1 className="font-poppins text-4xl md:text-5xl lg:text-6xl font-bold text-coffee-dark leading-tight">
               Transform Your <br />
-              <span className="text-green-500">Coffee Experience</span>
+              <span className="text-coffee-light">Coffee Experience</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-lg">
               Personalize your orders, earn rewards, gift to friends, and order from your table with just a scan - all in one digital café companion.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-              <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg">
+              <Button className="bg-coffee-dark hover:bg-coffee-medium text-white px-8 py-6 text-lg">
                 Get the App
               </Button>
-              <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-lg">
+              <Button variant="outline" className="border-coffee-dark text-coffee-dark hover:bg-coffee-cream px-8 py-6 text-lg">
                 Learn More
               </Button>
             </div>
             <div className="flex items-center gap-4 pt-2">
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white text-xs">JD</div>
-                <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white text-xs">KL</div>
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">MR</div>
+                <div className="w-8 h-8 rounded-full bg-coffee-dark flex items-center justify-center text-white text-xs">JD</div>
+                <div className="w-8 h-8 rounded-full bg-coffee-medium flex items-center justify-center text-white text-xs">KL</div>
+                <div className="w-8 h-8 rounded-full bg-coffee-light flex items-center justify-center text-white text-xs">MR</div>
               </div>
               <div className="flex items-center">
                 <div className="flex">
@@ -50,31 +50,21 @@ const HeroSection = () => {
                 <span className="ml-2 text-sm text-gray-600">From 500+ happy customers</span>
               </div>
             </div>
-            <div className="mt-6 bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
-              <h3 className="text-xl font-bold text-green-700 mb-2">Coffee Catch Game</h3>
-              <p className="text-gray-600 mb-4">Move your cursor to catch falling coffee beans and earn points!</p>
-              <div className="h-[300px] relative">
-                <Suspense fallback={<div className="flex items-center justify-center h-full">
-                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-600"></div>
-                </div>}>
-                  <CoffeeCatchGame />
-                </Suspense>
-              </div>
-            </div>
           </div>
           
           <div className="relative lg:h-[600px] animate-slide-up">
             <Suspense fallback={<div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-600"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-coffee-dark"></div>
             </div>}>
               <div className="relative">
+                <CoffeeScene />
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-[300px] h-[600px]">
                   <Phone3D />
                 </div>
               </div>
             </Suspense>
-            <div className="absolute top-10 right-2 lg:-right-16 w-32 h-32 bg-green-400/20 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-10 left-2 lg:-left-16 w-40 h-40 bg-green-100 rounded-full blur-3xl"></div>
+            <div className="absolute top-10 right-2 lg:-right-16 w-32 h-32 bg-coffee-light/20 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-10 left-2 lg:-left-16 w-40 h-40 bg-coffee-cream rounded-full blur-3xl"></div>
           </div>
         </div>
       </div>
