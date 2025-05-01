@@ -2,15 +2,15 @@
 
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import ScreenWrapper from '@/components/ScreenWrapper';
-import Typo from '@/components/Typo';
-import { radius, spacingX, spacingY, colors } from '@/constants/theme';
-import { verticalScale } from '@/utils/styling';
-import SearchInput from '@/components/SearchInput';
+import ScreenWrapper from '../../components/ScreenWrapper';
+import Typo from '../../components/Typo';
+import { radius, spacingX, spacingY, colors } from '../../constants/theme';
+import { verticalScale } from '../../utils/styling';
+import SearchInput from '../../components/SearchInput';
 import { Bell, BookmarkSimple, HandWaving } from 'phosphor-react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 
-const Home: React.FC = () => {
+const Home = () => {
   const rotation = useSharedValue(0);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             <Bell size={verticalScale(24)} color={colors.text} weight='regular' style={styles.icon} />
             <BookmarkSimple size={verticalScale(24)} color={colors.text} weight='regular' style={styles.icon} />
             <Image
-              source={require('@/assets/images/ProfilePlaceholder.png')}
+              source={require('../../assets/images/ProfilePlaceholder.png')}
               style={styles.profileImage}
               resizeMode='contain'
             />

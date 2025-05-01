@@ -1,6 +1,6 @@
 // app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
-import CustomTabs from '@/components/CustomTabs';
+import CustomTabs from '../../components/CustomTabs';
 
 export default function Layout() {
   return (

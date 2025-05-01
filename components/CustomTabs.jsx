@@ -12,11 +12,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { House, Briefcase, CalendarBlank, ChatText, GearSix } from 'phosphor-react-native';
-import { colors, spacingX, spacingY, radius } from '@/constants/theme';
+import { colors, spacingX, spacingY, radius } from '../constants/theme';
 
 /* -------------------------------------------------- */
 /* ――― Icon map ► add / change routes here ――― */
-const TAB_ICONS: Record<string, any> = {
+const TAB_ICONS = {
   index: House,
   Jobs: Briefcase,
   Events: CalendarBlank,
@@ -31,9 +31,9 @@ const ICON_SIZE = {
   INACTIVE: 32 // Increased from 26 to 32
 };
 
-const CustomTabs: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
+const CustomTabs = ({ state, descriptors, navigation }) => {
   const insets = useSafeAreaInsets();
-  const [expandedIndex, setExpandedIndex] = useState<number>(state.index);
+  const [expandedIndex, setExpandedIndex] = useState < number > state.index;
 
   // Track when focused tab changes to animate properly
   useEffect(() => {
@@ -62,7 +62,7 @@ const CustomTabs: React.FC<BottomTabBarProps> = ({ state, descriptors, navigatio
           return (
             <TabItem
               key={route.key}
-              label={label as string}
+              label={label}
               Icon={Icon}
               isFocused={isFocused}
               isExpanded={expandedIndex === idx}
@@ -93,27 +93,8 @@ const CustomTabs: React.FC<BottomTabBarProps> = ({ state, descriptors, navigatio
 /* ────────────────────────────────────────────── */
 /*  Single tab button  */
 /* ────────────────────────────────────────────── */
-type TabItemProps = {
-  label: string;
-  Icon: React.ComponentType<any>;
-  isFocused: boolean;
-  isExpanded: boolean;
-  totalTabs: number;
-  index: number;
-  onPress: () => void;
-  onLongPress: () => void;
-};
 
-const TabItem: React.FC<TabItemProps> = ({
-  label,
-  Icon,
-  isFocused,
-  isExpanded,
-  totalTabs,
-  index,
-  onPress,
-  onLongPress
-}) => {
+const TabItem = ({ label, Icon, isFocused, isExpanded, totalTabs, index, onPress, onLongPress }) => {
   const progress = useSharedValue(isFocused ? 1 : 0);
   const [textWidth, setTextWidth] = useState(0);
 
@@ -122,7 +103,7 @@ const TabItem: React.FC<TabItemProps> = ({
   }, [isFocused]);
 
   // Get text measurement for dynamic sizing
-  const onTextLayout = (e: LayoutChangeEvent) => {
+  const onTextLayout = e => {
     if (e.nativeEvent.layout.width > 0) {
       setTextWidth(e.nativeEvent.layout.width);
     }
@@ -173,7 +154,7 @@ const TabItem: React.FC<TabItemProps> = ({
   return (
     <Animated.View style={[styles.tabContainer, containerStyle]}>
       <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.pressable}>
-        <Animated.View style={[styles.pill, pillStyle] as any}>
+        <Animated.View style={[styles.pill, pillStyle]}>
           {/* Wrap Icon in Animated.View for additional animations */}
           <Animated.View style={iconSizeStyle}>
             <Icon

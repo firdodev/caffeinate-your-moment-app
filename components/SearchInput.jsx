@@ -1,8 +1,8 @@
 import { StyleSheet, View, TouchableOpacity, Modal, TextInput, Keyboard } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
-import { colors, radius, spacingX, spacingY } from '@/constants/theme';
-import { verticalScale } from '@/utils/styling';
-import Typo from '@/components/Typo';
+import { colors, radius, spacingX, spacingY } from '../constants/theme';
+import { verticalScale } from '../utils/styling';
+import Typo from '../components/Typo';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useSharedValue,
@@ -17,15 +17,15 @@ import { Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 const FINAL_CIRCLE_SIZE = Math.max(width, height) * 2;
 
-const SearchInput: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchText, setSearchText] = useState<string>('');
-  const [touchPosition, setTouchPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [shouldFocusInput, setShouldFocusInput] = useState<boolean>(false);
-  const inputRef = useRef<TextInput>(null);
+const SearchInput = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 });
+  const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const inputRef = useRef(null);
 
   // Reanimated shared values
-  const animationProgress = useSharedValue<number>(0);
+  const animationProgress = useSharedValue < number > 0;
 
   // Focus the input when needed
   useEffect(() => {
@@ -45,7 +45,7 @@ const SearchInput: React.FC = () => {
     setShouldFocusInput(false);
   };
 
-  const handleOpenModal = (event: any) => {
+  const handleOpenModal = event => {
     // Get touch coordinates
     const { pageX, pageY } = event.nativeEvent;
     setTouchPosition({ x: pageX, y: pageY });

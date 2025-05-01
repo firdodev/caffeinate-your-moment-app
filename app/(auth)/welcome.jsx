@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
-import ScreenWrapper from '@/components/ScreenWrapper';
-import Typo from '@/components/Typo';
-import { colors, spacingX, spacingY } from '@/constants/theme';
-import { verticalScale } from '@/utils/styling';
-import Button from '@/components/Button';
+import ScreenWrapper from '../../components/ScreenWrapper';
+import Typo from '../../components/Typo';
+import { colors, spacingX, spacingY } from '../../constants/theme';
+import { verticalScale } from '../../utils/styling';
+import Button from '../../components/Button';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 
@@ -21,7 +21,7 @@ const Welcome = () => {
 
           <Animated.Image
             entering={FadeIn.duration(1000)}
-            source={require('@/assets/images/welcome_avtr.png')}
+            source={require('../../assets/images/welcome_avtr.png')}
             style={styles.welcomeImage}
             resizeMode='contain'
           />

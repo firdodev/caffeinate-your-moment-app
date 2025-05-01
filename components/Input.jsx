@@ -1,10 +1,9 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import React from 'react';
-import { InputProps } from '@/types';
-import { colors, radius, spacingX } from '@/constants/theme';
-import { verticalScale } from '@/utils/styling';
+import { colors, radius, spacingX } from '../constants/theme';
+import { verticalScale } from '../utils/styling';
 
-const Input = (props: InputProps) => {
+const Input = props => {
   return (
     <View style={[styles.container, props.containerStyle && props.containerStyle]}>
       {props.icon && props.icon}
