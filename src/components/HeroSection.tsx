@@ -5,14 +5,12 @@ import { Coffee, Star } from 'lucide-react';
 
 // Use lazy imports for the 3D components to ensure they only load on the client
 const CoffeeScene = lazy(() => import('@/components/3d/CoffeeScene'));
-const FloatingBeans = lazy(() => import('@/components/3d/FloatingBeans'));
 const Phone3D = lazy(() => import('@/components/3d/Phone3D'));
 
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-coffee-cream to-white py-16 lg:py-24">
       <div className="absolute inset-0 bg-[radial-gradient(#D4A76A_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
-      <FloatingBeans />
       <div className="container relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col space-y-6 animate-fade-in">
