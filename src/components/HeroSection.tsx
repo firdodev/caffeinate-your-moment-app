@@ -1,11 +1,12 @@
 
 import React, { Suspense, lazy } from 'react';
 import { Button } from '@/components/ui/button';
-import { Coffee, Gift, Star } from 'lucide-react';
+import { Coffee, Star } from 'lucide-react';
 
 // Use lazy imports for the 3D components to ensure they only load on the client
 const CoffeeScene = lazy(() => import('@/components/3d/CoffeeScene'));
 const FloatingBeans = lazy(() => import('@/components/3d/FloatingBeans'));
+const Phone3D = lazy(() => import('@/components/3d/Phone3D'));
 
 const HeroSection = () => {
   return (
@@ -59,14 +60,8 @@ const HeroSection = () => {
             </div>}>
               <div className="relative">
                 <CoffeeScene />
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[560px] bg-coffee-dark rounded-[40px] p-3 z-10">
-                  <div className="w-full h-full bg-white rounded-[32px] overflow-hidden">
-                    <img 
-                      src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1200&q=80" 
-                      alt="Coffee app interface" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-[300px] h-[600px]">
+                  <Phone3D />
                 </div>
               </div>
             </Suspense>
