@@ -1,11 +1,10 @@
 
 import React, { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useSpring, animated } from '@react-three/drei';
+import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 
 interface Phone3DModelProps {
-  handleMouseMove: (e: THREE.Event) => void;
+  handleMouseMove: (e: ThreeEvent<PointerEvent>) => void;
   handleMouseLeave: () => void;
 }
 
@@ -54,11 +53,13 @@ const Phone3DModel: React.FC<Phone3DModelProps> = ({ handleMouseMove, handleMous
 const Phone3D: React.FC = () => {
   const [rotation, setRotation] = useState<[number, number, number]>([0, 0, 0]);
 
-  const handleMouseMove = (e: THREE.Event) => {
+  const handleMouseMove = (e: ThreeEvent<PointerEvent>) => {
     // Convert pointer position to rotation angles
-    const x = (e.point.y / 3) * Math.PI * 0.2;
-    const y = (e.point.x / 3) * Math.PI * 0.2;
-    setRotation([-x, y, 0]);
+    if (e.point) {
+      const x = (e.point.y / 3) * Math.PI * 0.2;
+      const y = (e.point.x / 3) * Math.PI * 0.2;
+      setRotation([-x, y, 0]);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -73,12 +74,12 @@ const Phone3D: React.FC = () => {
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
         <directionalLight position={[-5, 5, 5]} intensity={1} castShadow />
         
-        <animated.group rotation={rotation}>
+        <group rotation={rotation}>
           <Phone3DModel 
             handleMouseMove={handleMouseMove} 
             handleMouseLeave={handleMouseLeave}
           />
-        </animated.group>
+        </group>
       </Canvas>
     </div>
   );
