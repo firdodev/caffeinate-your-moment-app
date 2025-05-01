@@ -40,6 +40,18 @@ export default {
           cream: '#F5F1E8',
           beige: '#EAE1D2',
         },
+        green: {
+          50: '#F2FCE2',
+          100: '#E4F9C5',
+          200: '#C9F393',
+          300: '#AEEC60',
+          400: '#94E52D',
+          500: '#79DE00',
+          600: '#61B100',
+          700: '#498500',
+          800: '#305800',
+          900: '#182C00',
+        },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))'
