@@ -33,7 +33,7 @@ const ICON_SIZE = {
 
 const CustomTabs = ({ state, descriptors, navigation }) => {
   const insets = useSafeAreaInsets();
-  const [expandedIndex, setExpandedIndex] = useState < number > state.index;
+  const [expandedIndex, setExpandedIndex] = useState(state.index);
 
   // Track when focused tab changes to animate properly
   useEffect(() => {

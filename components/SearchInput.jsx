@@ -25,7 +25,7 @@ const SearchInput = () => {
   const inputRef = useRef(null);
 
   // Reanimated shared values
-  const animationProgress = useSharedValue < number > 0;
+  const animationProgress = useSharedValue(0);
 
   // Focus the input when needed
   useEffect(() => {
