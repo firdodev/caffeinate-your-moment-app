@@ -12,10 +12,7 @@ const config = {
   domain: 'dev-euksl3e3ndmpypcn.us.auth0.com',
   clientId: '0anEwRAyCg7Dj1u2RnyCaKH6TRpO1kSV',
   audience: 'https://dev-euksl3e3ndmpypcn.us.auth0.com/api/v2/',
-  redirectUri: AuthSession.makeRedirectUri({
-    scheme: 'exp',
-    path: 'callback'
-  })
+  redirectUri: 'exp://localhost:8081'
 };
 
 export const AuthProvider = ({ children }) => {
