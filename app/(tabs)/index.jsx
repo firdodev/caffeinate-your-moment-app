@@ -3,12 +3,28 @@ import tw from 'twrnc';
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Image, StyleSheet, View, Text, ScrollView, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Typo from '../../components/Typo';
 import { radius, spacingX, spacingY, colors } from '../../constants/theme';
 import { verticalScale } from '../../utils/styling';
 import SearchInput from '../../components/SearchInput';
-import { Bell, Plus, HandWaving, ShoppingCart, List, X } from 'phosphor-react-native';
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import {
+  Bell,
+  Plus,
+  HandWaving,
+  ShoppingCart,
+  List,
+  X,
+  Coffee,
+  Gear,
+  User,
+  Receipt,
+  BookOpen,
+  CubeFocus
+} from 'phosphor-react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -16,25 +32,31 @@ import Animated, {
   withTiming,
   withSpring,
   Easing,
-  interpolate,
-  runOnJS
+  interpolate
 } from 'react-native-reanimated';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import Svg, { Path } from 'react-native-svg';
+import SpecialForYouList from '../../components/SpecialForYouList';
+import { addToCart, showAddToCartNotification, getCart } from '../../utils/cartUtils';
 
 const { width } = Dimensions.get('window');
 
-// Available categories for the tabs
+// Available categories for the tabs with icons and routes
 const categories = [
-  { id: 'coffee', name: 'Coffee' },
-  { id: 'tea', name: 'Tea' },
-  { id: 'pastries', name: 'Pastries' },
-  { id: 'snacks', name: 'Snacks' },
-  { id: 'desserts', name: 'Desserts' }
+  { id: 'coffee', name: 'Coffee', icon: Coffee, route: './' },
+  { id: 'cart', name: 'Cart', icon: ShoppingCart, route: '/(tabs)/Cart' },
+  { id: 'menu', name: 'Menu', icon: BookOpen, route: '/(tabs)/Menu' },
+  { id: 'ar', name: 'Experience', icon: CubeFocus, route: './Experience' },
+  { id: 'profile', name: 'Profile', icon: User, route: './Profile' }
 ];
 
 const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => {
+  const router = useRouter();
+  const [cartItems, setCartItems] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
+  const auth = getAuth();
+
   // Animation values
   const menuAnimation = useSharedValue(0);
   const iconRotation = useSharedValue(0);
@@ -77,10 +99,61 @@ const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => 
     };
   });
 
-  // Handle category selection
-  const handleCategorySelect = categoryId => {
+  // Load cart items on mount and set up interval for updates
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        const cart = await getCart();
+        setCartItems(cart);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      }
+    };
+
+    loadCart();
+    const interval = setInterval(loadCart, 1000); // Check for updates every second
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Load user profile
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (auth.currentUser) {
+        try {
+          const userRef = doc(db, 'users', auth.currentUser.uid);
+          const userDoc = await getDoc(userRef);
+
+          if (userDoc.exists()) {
+            setUserProfile(userDoc.data());
+          } else {
+            setUserProfile({
+              photoURL: auth.currentUser.photoURL,
+              username: auth.currentUser.displayName || 'User'
+            });
+          }
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+        }
+      }
+    };
+
+    loadUserProfile();
+
+    // Set up an interval to check for profile updates
+    const interval = setInterval(loadUserProfile, 5000);
+
+    return () => clearInterval(interval);
+  }, [auth.currentUser]);
+
+  // Handle category selection and navigation
+  const handleCategorySelect = (categoryId, route) => {
     setActiveCategory(categoryId);
     toggleMenu();
+
+    if (route) {
+      router.replace(route);
+    }
   };
 
   return (
@@ -91,9 +164,9 @@ const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => 
         <Svg xmlns='http://www.w3.org/2000/svg' height={200} width={width} viewBox={`0 0 1440 402`}>
           <Path
             fill={colors.primary}
-            fill-opacity='1'
+            fillOpacity='1'
             d='M0,288L48,272C96,256,192,224,288,208C384,192,480,192,576,202.7C672,213,768,235,864,218.7C960,203,1056,149,1152,138.7C1248,128,1344,160,1392,176L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'
-          ></Path>
+          />
         </Svg>
       </View>
 
@@ -101,8 +174,16 @@ const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => 
       <View style={styles.headerContent}>
         <View style={styles.headerRow}>
           {/* Profile Image */}
-          <TouchableOpacity>
-            <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.profileImage} />
+          <TouchableOpacity onPress={() => router.push('./Profile')}>
+            <Image
+              source={{
+                uri:
+                  userProfile?.photoURL ||
+                  auth.currentUser?.photoURL ||
+                  'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+              }}
+              style={styles.profileImage}
+            />
           </TouchableOpacity>
 
           {/* Category Menu Button */}
@@ -116,19 +197,23 @@ const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => 
               )}
             </Animated.View>
 
-            {/* Category Menu Items */}
+            {/* Category Menu Items in a Column */}
             <Animated.View style={[styles.categoryMenuContainer, menuContentStyle]}>
-              {categories.map(category => (
-                <TouchableOpacity
-                  key={category.id}
-                  style={[styles.categoryItem, activeCategory === category.id && styles.activeCategoryItem]}
-                  onPress={() => handleCategorySelect(category.id)}
-                >
-                  <Text style={[styles.categoryText, activeCategory === category.id && styles.activeCategoryText]}>
-                    {category.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              <View style={styles.categoryColumnContainer}>
+                {categories.map(category => {
+                  const Icon = category.icon;
+                  return (
+                    <TouchableOpacity
+                      key={category.id}
+                      style={[styles.categoryItem, activeCategory === category.id && styles.activeCategoryItem]}
+                      onPress={() => handleCategorySelect(category.id, category.route)}
+                    >
+                      <Icon size={20} color={colors.white} weight='bold' />
+                      <Text style={styles.categoryText}>{category.name}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </Animated.View>
           </TouchableOpacity>
 
@@ -138,8 +223,15 @@ const Header = ({ menuOpen, toggleMenu, activeCategory, setActiveCategory }) => 
               <Bell size={24} color={colors.white} weight='bold' />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.iconContainer}>
-              <ShoppingCart size={24} color={colors.white} weight='bold' />
+            <TouchableOpacity style={styles.iconContainer} onPress={() => router.push('./Cart')}>
+              <View>
+                <ShoppingCart size={24} color={colors.white} weight='bold' />
+                {cartItems.length > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>{cartItems.length}</Text>
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -156,6 +248,7 @@ const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('coffee');
   const [filteredMenu, setFilteredMenu] = useState([]);
+  const router = useRouter();
 
   // Toggle menu state
   const toggleMenu = useCallback(() => {
@@ -215,9 +308,19 @@ const Home = () => {
     setQuantities(q => ({ ...q, [id]: Math.max(1, (q[id] || 1) + delta) }));
   };
 
-  const handleAddToOrder = item => {
-    // TODO: Integrate with Firestore orders
-    alert(`Added ${quantities[item.id] || 1} x ${item.name} to order!`);
+  const handleAddToOrder = async item => {
+    const quantity = quantities[item.id] || 1;
+    try {
+      const result = await addToCart(item, quantity);
+      if (result.success) {
+        showAddToCartNotification(item, quantity);
+      } else {
+        alert('Failed to add item to cart. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   const renderMenuItem = ({ item }) => (
@@ -241,27 +344,15 @@ const Home = () => {
         activeCategory={activeCategory}
         setActiveCategory={setActiveCategory}
       />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.greeting}>
-          <View style={styles.userRow}>
-            <Animated.View style={handStyle}>
-              <HandWaving size={24} color={colors.primary} weight='fill' />
-            </Animated.View>
-            <Typo variant='title'>Good Morning</Typo>
-          </View>
-          <Typo variant='body' style={styles.greetingSubtitle}>
-            Let's order fresh {activeCategory}
-          </Typo>
-        </View>
-
-        <SearchInput placeholder={`Search ${activeCategory}...`} />
+      <View style={styles.container}>
+        <SearchInput placeholder={`Search here...`} />
 
         {/* Special For You Section */}
         <View style={styles.sectionHeader}>
           <Typo variant='title' style={styles.sectionTitle}>
-            Special for you
+            New Menu
           </Typo>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/Menu')}>
             <Typo variant='caption' style={styles.viewAll}>
               View All
             </Typo>
@@ -269,14 +360,16 @@ const Home = () => {
         </View>
 
         {special.length > 0 ? (
-          <FlatList
-            data={special}
-            renderItem={renderMenuItem}
-            keyExtractor={item => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.menuList}
-          />
+          <View style={{ height: 250 }}>
+            <FlatList
+              data={special}
+              renderItem={renderMenuItem}
+              keyExtractor={item => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.menuList}
+            />
+          </View>
         ) : (
           <View style={tw`py-4`}>
             <Typo variant='body'>Loading special items...</Typo>
@@ -286,9 +379,9 @@ const Home = () => {
         {/* Menu Section */}
         <View style={styles.sectionHeader}>
           <Typo variant='title' style={styles.sectionTitle}>
-            {activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Menu
+            Special for you
           </Typo>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/Menu')}>
             <Typo variant='caption' style={styles.viewAll}>
               View All
             </Typo>
@@ -296,20 +389,13 @@ const Home = () => {
         </View>
 
         {filteredMenu.length > 0 ? (
-          <FlatList
-            data={filteredMenu}
-            renderItem={renderMenuItem}
-            keyExtractor={item => item.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.menuList}
-          />
+          <SpecialForYouList />
         ) : (
           <View style={tw`py-4`}>
             <Typo variant='body'>No {activeCategory} items found</Typo>
           </View>
         )}
-      </ScrollView>
+      </View>
     </ScreenWrapper>
   );
 };
@@ -317,7 +403,7 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
-  // Header styles
+  /* ─── HEADER ─────────────────────────────────── */
   headerContainer: {
     position: 'relative',
     height: 120,
@@ -327,7 +413,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0
+    right: 0,
+    zIndex: -1, // <-- keeps the wave behind everything
+    pointerEvents: 'none' // <-- prevents it from blocking touches
   },
   headerContent: {
     paddingTop: spacingY._10,
@@ -361,10 +449,8 @@ const styles = StyleSheet.create({
     borderEndStartRadius: 20,
     borderEndEndRadius: 20,
     position: 'relative',
-    zIndex: 20,
-    overflow: 'visible'
+    zIndex: 20
   },
-  // Menu button animation styles
   menuButtonBackground: {
     position: 'absolute',
     top: 0,
@@ -381,35 +467,32 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 60,
     left: -100,
-    width: 250,
+    width: 200,
     borderRadius: 15,
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 6,
+    padding: 10,
     zIndex: 100
   },
+  categoryColumnContainer: {
+    flexDirection: 'column',
+    alignItems: 'stretch'
+  },
   categoryItem: {
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    borderRadius: 8,
-    marginBottom: 5
+    borderRadius: 20,
+    marginVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  activeCategoryItem: {
-    backgroundColor: colors.primary
-  },
+  activeCategoryItem: {},
   categoryText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    color: colors.black
-  },
-  activeCategoryText: {
-    color: colors.white
+    color: colors.white,
+    marginLeft: 10
   },
 
-  // Original styles
+  /* ─── BODY ───────────────────────────────────── */
   container: {
     flex: 1,
     paddingHorizontal: spacingX._20
@@ -446,6 +529,8 @@ const styles = StyleSheet.create({
   menuList: {
     paddingBottom: spacingY._10
   },
+
+  /* ─── CARD ───────────────────────────────────── */
   menuCard: {
     backgroundColor: colors.lightGreen,
     borderRadius: 30,
@@ -459,7 +544,7 @@ const styles = StyleSheet.create({
   },
   menuImageWrapper: {
     position: 'absolute',
-    top: -37,
+    top: -50,
     zIndex: 2,
     alignItems: 'center',
     width: '100%'
@@ -467,9 +552,6 @@ const styles = StyleSheet.create({
   menuImage: {
     width: 120,
     height: 120,
-    padding: 0,
-    margin: 0,
-    marginBottom: 8,
     transform: 'rotateZ(-9deg)'
   },
   menuName: {
@@ -509,5 +591,22 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontWeight: 'bold',
     fontSize: 16
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: colors.rose,
+    borderRadius: radius._10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4
+  },
+  cartBadgeText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: 'bold'
   }
 });

@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { AuthProvider, useAuth } from '../contexts/authContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BalanceProvider } from '../utils/balanceContext';
+import { LoyaltyProvider } from '../utils/loyaltyContext';
 
 const StackLayout = () => {
   const { user, loading } = useAuth();
@@ -23,7 +26,13 @@ const StackLayout = () => {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <StackLayout />
+      <BalanceProvider>
+        <LoyaltyProvider>
+          <GestureHandlerRootView>
+            <StackLayout />
+          </GestureHandlerRootView>
+        </LoyaltyProvider>
+      </BalanceProvider>
     </AuthProvider>
   );
 }

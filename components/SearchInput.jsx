@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity, Modal, TextInput, Keyboard } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Modal, TextInput, Keyboard, FlatList, Image } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
 import { colors, radius, spacingX, spacingY } from '../constants/theme';
 import { verticalScale } from '../utils/styling';
@@ -13,19 +13,40 @@ import Animated, {
   runOnJS
 } from 'react-native-reanimated';
 import { Dimensions } from 'react-native';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebase';
+import { addToCart, showAddToCartNotification } from '../utils/cartUtils';
 
 const { width, height } = Dimensions.get('window');
 const FINAL_CIRCLE_SIZE = Math.max(width, height) * 2;
 
-const SearchInput = () => {
+const SearchInput = ({ placeholder = 'Search here...' }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 });
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [quantities, setQuantities] = useState({});
   const inputRef = useRef(null);
 
   // Reanimated shared values
   const animationProgress = useSharedValue(0);
+
+  // Fetch products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const items = [];
+        querySnapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+        setProducts(items);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Focus the input when needed
   useEffect(() => {
@@ -46,15 +67,10 @@ const SearchInput = () => {
   };
 
   const handleOpenModal = event => {
-    // Get touch coordinates
     const { pageX, pageY } = event.nativeEvent;
     setTouchPosition({ x: pageX, y: pageY });
-
-    // Open modal
     setModalVisible(true);
     resetFocusState();
-
-    // Start animation
     animationProgress.value = 0;
     animationProgress.value = withTiming(1, { duration: 300 }, finished => {
       if (finished) {
@@ -69,11 +85,8 @@ const SearchInput = () => {
   };
 
   const handleCloseModal = () => {
-    // Dismiss keyboard first
     Keyboard.dismiss();
     resetFocusState();
-
-    // Reverse animation
     animationProgress.value = withTiming(0, { duration: 300 }, finished => {
       if (finished) {
         runOnJS(completeModalClose)();
@@ -81,10 +94,44 @@ const SearchInput = () => {
     });
   };
 
+  const handleQuantity = (id, delta) => {
+    setQuantities(q => ({ ...q, [id]: Math.max(1, (q[id] || 1) + delta) }));
+  };
+
+  const handleAddToOrder = async item => {
+    const quantity = quantities[item.id] || 1;
+    try {
+      const result = await addToCart(item, quantity);
+      if (result.success) {
+        showAddToCartNotification(item, quantity);
+        setQuantities(q => ({ ...q, [item.id]: 1 }));
+      } else {
+        alert('Failed to add item to cart. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
+  const filteredProducts = products.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()));
+
+  const renderProduct = ({ item }) => (
+    <View style={styles.productCard}>
+      <View style={styles.productImageWrapper}>
+        <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
+      </View>
+      <Typo style={styles.productName}>{item.name}</Typo>
+      <Typo style={styles.productPrice}>${item.price?.toFixed(2)}</Typo>
+      <TouchableOpacity style={styles.addButton} onPress={() => handleAddToOrder(item)}>
+        <Ionicons name='add' size={20} color={colors.white} />
+      </TouchableOpacity>
+    </View>
+  );
+
   // Circle animated style
   const circleStyle = useAnimatedStyle(() => {
     const scale = animationProgress.value;
-
     return {
       transform: [{ scale }],
       opacity: 1
@@ -100,19 +147,16 @@ const SearchInput = () => {
 
   return (
     <>
-      {/* Search Button */}
       <TouchableOpacity style={styles.searchButton} onPress={handleOpenModal} activeOpacity={0.7}>
         <Ionicons name='search' size={verticalScale(20)} color={colors.secondaryGreen} />
         <Typo style={styles.searchButtonText} color={colors.neutral400}>
-          Search here...
+          {placeholder}
         </Typo>
       </TouchableOpacity>
 
-      {/* Search Modal */}
       {modalVisible && (
         <Modal transparent visible={true} animationType='none' onRequestClose={handleCloseModal} statusBarTranslucent>
           <View style={styles.modalContainer}>
-            {/* Animated Circle */}
             <Animated.View
               style={[
                 styles.animatedCircle,
@@ -126,14 +170,13 @@ const SearchInput = () => {
               ]}
             />
 
-            {/* Search Content */}
             <Animated.View style={[styles.searchContent, contentStyle]}>
               <View style={styles.searchBar}>
                 <Ionicons name='search' size={verticalScale(20)} color={colors.secondaryGreen} />
                 <TextInput
                   ref={inputRef}
                   style={styles.input}
-                  placeholder='Search'
+                  placeholder='Search products...'
                   placeholderTextColor={colors.neutral400}
                   value={searchText}
                   onChangeText={setSearchText}
@@ -143,13 +186,18 @@ const SearchInput = () => {
                 </TouchableOpacity>
               </View>
 
-              {/* Search Results Area */}
               <View style={styles.resultsContainer}>
-                {/* Results will go here */}
                 {searchText ? (
-                  <Typo style={styles.resultsText}>Showing results for "{searchText}"</Typo>
+                  <FlatList
+                    data={filteredProducts}
+                    renderItem={renderProduct}
+                    keyExtractor={item => item.id}
+                    numColumns={2}
+                    contentContainerStyle={styles.productsList}
+                    showsVerticalScrollIndicator={false}
+                  />
                 ) : (
-                  <Typo style={styles.emptyText}>Type to search</Typo>
+                  <Typo style={styles.emptyText}>Type to search products</Typo>
                 )}
               </View>
             </Animated.View>
@@ -220,6 +268,56 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(16),
     color: colors.white,
     textAlign: 'center'
+  },
+  productsList: {
+    paddingBottom: spacingY._20,
+    paddingHorizontal: spacingX._10
+  },
+  productCard: {
+    backgroundColor: colors.lightGreen,
+    borderRadius: 30,
+    borderEndStartRadius: 80,
+    borderEndEndRadius: 80,
+    padding: 16,
+    width: width / 2 - 30,
+    alignItems: 'center',
+    marginTop: 50,
+    height: 180,
+    marginHorizontal: spacingX._5
+  },
+  productImageWrapper: {
+    position: 'absolute',
+    top: -50,
+    zIndex: 2,
+    alignItems: 'center',
+    width: '100%'
+  },
+  productImage: {
+    width: 100,
+    height: 100,
+    padding: 0,
+    margin: 0,
+    marginBottom: 8,
+    transform: [{ rotateZ: '-9deg' }]
+  },
+  productName: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: colors.black,
+    marginBottom: 4,
+    marginTop: 50,
+    textAlign: 'center'
+  },
+  productPrice: {
+    color: colors.primary,
+    fontWeight: 'bold',
+    fontSize: 20
+  },
+  addButton: {
+    backgroundColor: colors.black,
+    padding: 8,
+    borderRadius: 12,
+    marginTop: 8
   }
 });
 
