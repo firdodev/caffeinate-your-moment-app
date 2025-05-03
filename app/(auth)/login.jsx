@@ -1,22 +1,29 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Typo from '../../components/Typo';
 import { colors, spacingX, spacingY } from '../../constants/theme';
-import { verticalScale } from '../../utils/styling';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/Button';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/authContext';
+import Input from '../../components/Input';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const router = useRouter();
   const { login } = useAuth();
 
   const handleSubmit = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
     setIsLoading(true);
-    const result = await login();
+    const result = await login(email, password);
     setIsLoading(false);
 
     if (!result.success) {
@@ -42,6 +49,16 @@ const Login = () => {
           <Typo size={16} color={colors.textLighter}>
             Login now more jobs and events are added
           </Typo>
+
+          <Input
+            placeholder='Email'
+            value={email}
+            onChangeText={setEmail}
+            keyboardType='email-address'
+            autoCapitalize='none'
+          />
+
+          <Input placeholder='Password' value={password} onChangeText={setPassword} secureTextEntry />
 
           <Button loading={isLoading} onPress={handleSubmit}>
             <Typo fontWeight={'700'} color={colors.black} size={21}>
@@ -72,28 +89,13 @@ const styles = StyleSheet.create({
     gap: spacingY._30,
     paddingHorizontal: spacingX._20
   },
-  welcomeText: {
-    fontSize: verticalScale(20),
-    fontWeight: 'bold',
-    color: colors.text
-  },
   form: {
     gap: spacingY._20
-  },
-  forgotPassword: {
-    textAlign: 'right',
-    fontWeight: '500',
-    color: colors.text
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 5
-  },
-  footerText: {
-    textAlign: 'center',
-    color: colors.text,
-    fontSize: verticalScale(15)
   }
 });

@@ -1,26 +1,34 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import React, { useState } from 'react';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Typo from '../../components/Typo';
 import { colors, spacingX, spacingY } from '../../constants/theme';
-import { verticalScale } from '../../utils/styling';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/Button';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/authContext';
+import Input from '../../components/Input';
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const router = useRouter();
   const { register } = useAuth();
 
   const handleSubmit = async () => {
+    if (!email || !password || !username) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
     setIsLoading(true);
-    const result = await register();
+    const result = await register(email, password, username);
     setIsLoading(false);
 
     if (!result.success) {
-      Alert.alert('Sign up', result.msg);
+      Alert.alert('Sign up Failed', result.msg);
     }
   };
 
@@ -42,6 +50,18 @@ const Register = () => {
           <Typo size={16} color={colors.textLighter}>
             Sign up to get started with our app
           </Typo>
+
+          <Input placeholder='Username' value={username} onChangeText={setUsername} autoCapitalize='none' />
+
+          <Input
+            placeholder='Email'
+            value={email}
+            onChangeText={setEmail}
+            keyboardType='email-address'
+            autoCapitalize='none'
+          />
+
+          <Input placeholder='Password' value={password} onChangeText={setPassword} secureTextEntry />
 
           <Button loading={isLoading} onPress={handleSubmit}>
             <Typo fontWeight={'700'} color={colors.black} size={21}>

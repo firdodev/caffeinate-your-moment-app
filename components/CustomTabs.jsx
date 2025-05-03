@@ -11,17 +11,17 @@ import Animated, {
   Extrapolate
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { House, Briefcase, CalendarBlank, ChatText, GearSix } from 'phosphor-react-native';
+import { House, Coffee, ShoppingCart, ClipboardText, User } from 'phosphor-react-native';
 import { colors, spacingX, spacingY, radius } from '../constants/theme';
 
 /* -------------------------------------------------- */
 /* ――― Icon map ► add / change routes here ――― */
 const TAB_ICONS = {
-  index: House,
-  Jobs: Briefcase,
-  Events: CalendarBlank,
-  Community: ChatText,
-  Settings: GearSix
+  index: House, // Home
+  Menu: Coffee,
+  Cart: ShoppingCart,
+  Orders: ClipboardText,
+  Profile: User
 };
 /* -------------------------------------------------- */
 
@@ -51,6 +51,8 @@ const CustomTabs = ({ state, descriptors, navigation }) => {
     >
       <View style={styles.wrapper}>
         {state.routes.map((route, idx) => {
+          // Only show allowed tabs
+          if (!Object.keys(TAB_ICONS).includes(route.name)) return null;
           const isFocused = state.index === idx;
           const { options } = descriptors[route.key];
 

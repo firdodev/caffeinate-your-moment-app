@@ -102,9 +102,9 @@ const SearchInput = () => {
     <>
       {/* Search Button */}
       <TouchableOpacity style={styles.searchButton} onPress={handleOpenModal} activeOpacity={0.7}>
-        <Ionicons name='search' size={verticalScale(20)} color={colors.neutral400} />
+        <Ionicons name='search' size={verticalScale(20)} color={colors.secondaryGreen} />
         <Typo style={styles.searchButtonText} color={colors.neutral400}>
-          Search
+          Search here...
         </Typo>
       </TouchableOpacity>
 
@@ -129,7 +129,7 @@ const SearchInput = () => {
             {/* Search Content */}
             <Animated.View style={[styles.searchContent, contentStyle]}>
               <View style={styles.searchBar}>
-                <Ionicons name='search' size={verticalScale(20)} color={colors.white} />
+                <Ionicons name='search' size={verticalScale(20)} color={colors.secondaryGreen} />
                 <TextInput
                   ref={inputRef}
                   style={styles.input}
@@ -139,7 +139,7 @@ const SearchInput = () => {
                   onChangeText={setSearchText}
                 />
                 <TouchableOpacity onPress={handleCloseModal}>
-                  <Ionicons name='close' size={verticalScale(22)} color={colors.white} />
+                  <Ionicons name='close' size={verticalScale(22)} color={colors.secondaryGreen} />
                 </TouchableOpacity>
               </View>
 
@@ -166,12 +166,13 @@ const styles = StyleSheet.create({
     height: verticalScale(50),
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.neutral300,
+    borderColor: colors.lightGreen,
     borderRadius: radius._17,
     borderCurve: 'continuous',
     paddingHorizontal: spacingX._15,
     gap: spacingX._10,
-    marginTop: spacingY._20
+    marginTop: spacingY._20,
+    backgroundColor: colors.lightGreen
   },
   searchButtonText: {
     fontSize: verticalScale(14)
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
   },
   animatedCircle: {
     position: 'absolute',
-    backgroundColor: colors.neutral800,
+    backgroundColor: colors.primaryDark,
     borderRadius: FINAL_CIRCLE_SIZE / 2
   },
   searchContent: {
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     height: verticalScale(54),
-    backgroundColor: colors.neutral700,
+    backgroundColor: colors.lightGreen,
     alignItems: 'center',
     borderRadius: radius._17,
     borderCurve: 'continuous',
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: colors.white,
+    color: colors.black,
     fontSize: verticalScale(14)
   },
   resultsContainer: {
@@ -212,11 +213,12 @@ const styles = StyleSheet.create({
   },
   resultsText: {
     fontSize: verticalScale(16),
-    textAlign: 'center'
+    textAlign: 'center',
+    color: colors.white
   },
   emptyText: {
     fontSize: verticalScale(16),
-    color: colors.neutral400,
+    color: colors.white,
     textAlign: 'center'
   }
 });

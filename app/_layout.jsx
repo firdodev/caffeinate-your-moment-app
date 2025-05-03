@@ -1,10 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Stack } from 'expo-router';
-import { AuthProvider } from '../contexts/authContext';
+import { StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { Stack, useRouter } from 'expo-router';
+import { AuthProvider, useAuth } from '../contexts/authContext';
 
 const StackLayout = () => {
-  return <Stack screenOptions={{ headerShown: false }}></Stack>;
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/welcome');
+      }
+    }
+  }, [user, loading]);
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 };
 
 export default function RootLayout() {

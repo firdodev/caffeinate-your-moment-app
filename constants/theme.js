@@ -1,16 +1,22 @@
+// constants/theme.js
 import { scale, verticalScale } from '../utils/styling';
 
 export const colors = {
-  primary: '#4340e6',
-  primaryLight: '#0ea5e9',
-  primaryDark: '#0369a1',
-  text: '#fff',
-  textLight: '#e5e5e5',
-  textLighter: '#d4d4d4',
-  white: '#fff',
-  black: '#000',
+  // Updated to Starbucks colors
+  primary: '#006241', // Starbucks primary green
+  primaryLight: '#1E3932', // Starbucks dark green
+  primaryDark: '#00482F', // Darker shade of Starbucks green
+  secondaryGreen: '#0D8F6F', // Medium green
+  accent: '#D4E9E2', // Light mint green
+  lightGreen: '#e7f2ee',
+  gold: '#CBA258', // Starbucks gold
+  text: '#1E3932', // Dark green for most text
+  textLight: '#ffffff', // White text
+  textLighter: '#f5f5f5', // Off-white text
+  white: '#ffffff',
+  black: '#000000',
   rose: '#ef4444',
-  green: '#16a34a',
+  green: '#006241', // Using Starbucks green as the green color
   neutral50: '#fafafa',
   neutral100: '#f5f5f5',
   neutral200: '#e5e5e5',
