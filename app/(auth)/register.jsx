@@ -47,7 +47,7 @@ const Register = () => {
         </View>
 
         <View style={styles.form}>
-          <Typo size={16} color={colors.textLighter}>
+          <Typo size={16} color={colors.secondaryGreen}>
             Sign up to get started with our app
           </Typo>
 
@@ -64,7 +64,7 @@ const Register = () => {
           <Input placeholder='Password' value={password} onChangeText={setPassword} secureTextEntry />
 
           <Button loading={isLoading} onPress={handleSubmit}>
-            <Typo fontWeight={'700'} color={colors.black} size={21}>
+            <Typo fontWeight={'700'} color={colors.white} size={21}>
               Sign up
             </Typo>
           </Button>

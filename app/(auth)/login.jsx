@@ -46,8 +46,8 @@ const Login = () => {
         </View>
 
         <View style={styles.form}>
-          <Typo size={16} color={colors.textLighter}>
-            Login now more jobs and events are added
+          <Typo size={16} color={colors.secondaryGreen}>
+            Login now to brew your coffee
           </Typo>
 
           <Input
@@ -61,7 +61,7 @@ const Login = () => {
           <Input placeholder='Password' value={password} onChangeText={setPassword} secureTextEntry />
 
           <Button loading={isLoading} onPress={handleSubmit}>
-            <Typo fontWeight={'700'} color={colors.black} size={21}>
+            <Typo fontWeight={'700'} color={colors.white} size={21}>
               Login
             </Typo>
           </Button>

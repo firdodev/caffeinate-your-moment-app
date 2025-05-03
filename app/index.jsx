@@ -8,7 +8,7 @@ const index = () => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} resizeMode='contain' source={require('../assets/images/yume-logo.png')} />
+      <Image style={styles.logo} resizeMode='contain' source={require('../assets/images/icon.png')} />
     </View>
   );
 };
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.neutral900
+    backgroundColor: colors.white
   },
   logo: {
     height: '20%',

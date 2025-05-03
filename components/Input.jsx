@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: colors.white,
+    color: colors.black,
     fontSize: verticalScale(14)
   }
 });
